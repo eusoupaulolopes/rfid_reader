@@ -8,24 +8,30 @@ import api.reader.commands.ReaderTags;
 import api.reader.commands.ReaderTagsReset;
 import api.reader.facade.ApiReaderFacade;
 import api.reader.nesslab.exceptions.SessionFullException;
+import api.reader.nesslab.facade.ApiReaderNesslab;
 import api.reader.nesslab.utils.OperationUtil;
 import api.reader.speedway.facade.ApiReaderSpeedway;
-public class RFIDMain {
+import api.reader.speedway.utils.SpeedwayConnectReader;
+public class RFIDNesslab {
 	
 	public static void main(String[] args) {		
 		try {
 			
 			/* The class ApiReaderNesslab to be instantiated, a 
 			 * new connection with the Nesslab is opened. */
-			ApiReaderFacade api = new ApiReaderSpeedway("192.168.1.3");
+			ApiReaderFacade api = new ApiReaderNesslab("10.7.125.7");
 			api.defaultConfiguration();
+			api.clearTemporaryMemory(200);//Clean memory of 2 in 2 minutes.
+			
+			api.executeAction(new EnableBuzzer());
 			api.executeAction(new ReaderTags());
+			
 			while (api.hasResponse()) {
 				try {
 					api.captureTagsObject();
-//					if(api.hasNewTag()){
-//						System.out.println(api.getTagUniqueJsonRepresentation());
-//					}
+					if(api.hasNewTag()){
+						System.out.println(api.getTagUniqueJsonRepresentation());
+					}
 					
 				} catch (SessionFullException e) {
 					api.executeAction(new ReaderTagsReset());

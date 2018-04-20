@@ -150,8 +150,7 @@ public class ApiReaderNesslab implements ApiReaderFacade{
 	}
 	
 	/**
-	 * To configure api with everyone necessary configuration for default run. 
-	 * The configurarions are: 1ms of scan time, buzzer disabled, power control with 250dbm and continue mode enabled.
+	 * To runs reader with defaultSettings
 	 * @throws UnknownHostException Is trown when the host not found.
 	 * @throws IOException Is trown when any failure I/O ocurred.
 	 * */

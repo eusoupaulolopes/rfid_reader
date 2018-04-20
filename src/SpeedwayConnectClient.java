@@ -6,7 +6,7 @@ public class SpeedwayConnectClient
     public static void main(String[] args)
     {
         // The IP address or hostname of your reader
-        final String READER_HOSTNAME = "192.168.1.2";
+        final String READER_HOSTNAME = "192.168.1.3";
         // The TCP port specified in Speedway Connect
         final int READER_PORT = 14150;
          

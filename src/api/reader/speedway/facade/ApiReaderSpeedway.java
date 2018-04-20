@@ -5,6 +5,10 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import com.impinj.octane.OctaneSdkException;
+import com.impinj.octane.ReaderMode;
+import com.impinj.octane.ReportMode;
+import com.impinj.octane.SearchMode;
+import com.impinj.octane.Settings;
 
 import api.reader.facade.ApiReaderFacade;
 import api.reader.interfaces.Command;
@@ -23,7 +27,7 @@ import api.reader.speedway.utils.SpeedwayConnectReader;
  */
 public class ApiReaderSpeedway implements ApiReaderFacade {
 
-	private ConnectReader cr;
+	private SpeedwayConnectReader cr;
 	private final Integer SPEEDWAY_PORT_DEFAULT = 14150;
 	private final String ipReader;
 
@@ -32,13 +36,22 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 	 * 
 	 * @param command
 	 *            is a command of API.
+	 * @throws IOException
+	 * @throws UnknownHostException
 	 */
-	public ApiReaderSpeedway(String ip) {
+	public ApiReaderSpeedway(String ip) throws UnknownHostException, IOException {
 		this.ipReader = ip;
+		try {
+			this.cr = SpeedwayConnectReader.getInstance(this.ipReader, SPEEDWAY_PORT_DEFAULT);
+		} catch (OctaneSdkException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
-	 * This method exposes the proposed connector to actions defined by a command
+	 * This method exposes the proposed connector to actions defined by a
+	 * command
 	 * 
 	 * @param command
 	 *            a command of API.
@@ -49,54 +62,20 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 	 */
 	@Override
 	public void executeAction(Command command) throws UnknownHostException, IOException {
-		try {
-			command.execute(SpeedwayConnectReader.getInstance(this.getIpReader(), SPEEDWAY_PORT_DEFAULT ));
-		} catch (OctaneSdkException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		command.execute(cr);
 	}
 
-	/**
-	 * Returns the response of commands.
-	 * 
-	 * @return Response of reader.
-	 * @throws UnknownHostException
-	 *             Is trown when the host not found.
-	 * @throws IOException
-	 *             Is trown when any failure I/O ocurred.
-	 * @throws  
-	 */
 	@Override
 	public String getResponse() throws UnknownHostException, IOException {
-		SpeedwayConnectReader connector;
+
 		String response = "";
-		try {
-			connector = SpeedwayConnectReader.getInstance(this.getIpReader(), SPEEDWAY_PORT_DEFAULT );
-			response = connector.getResponse();
-			
-		} catch (OctaneSdkException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		response = cr.getResponse();
 		return response;
 	}
 
-	/**
-	 * Check if exists any response of Reader.
-	 * 
-	 * @return True if exists response or false if not exist.
-	 * @throws UnknownHostException
-	 *             Is trown when the host not found.
-	 * @throws IOException
-	 *             Is trown when any failure I/O ocurred.
-	 */
 	@Override
 	public boolean hasResponse() throws UnknownHostException, IOException {
-		NesslabConnectReader connector = NesslabConnectReader.getInstance(OperationUtil.getIpReader(),
-				OperationUtil.PORT_READER);
-		return connector.hasResponse();
+		return cr.hasResponse();
 	}
 
 	/**
@@ -114,19 +93,12 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 		return api.reader.nesslab.utils.CaptureTagsRepresentation.getTags();
 	}
 
-	/**
-	 * Captures and encapsulates the tag in a TagAntenna object and adds to the
-	 * list of tags.
-	 * 
-	 * @throws UnknownHostException
-	 *             Is trown when the host not found.
-	 * @throws IOException
-	 *             Is trown when any failure I/O ocurred.
-	 */
 	@Override
 	public void captureTagsObject() throws UnknownHostException, IOException, SessionFullException {
 		String response = getResponse();
-		api.reader.nesslab.utils.CaptureTagsRepresentation.getObjectRepresentation(response);
+		// TODO Representacao JSON das tags
+		// api.reader.nesslab.utils.CaptureTagsRepresentation.getObjectRepresentation(response);
+		System.out.println(response);
 	}
 
 	/**
@@ -180,19 +152,28 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 	}
 
 	@Override
-	public final void defaultConfiguration() throws UnknownHostException, IOException {
-		OperationUtil.setPortReader(5084);
-		// executeAction(new SetScanTime(1L));
-		// executeAction(new DisableBuzzer());
-		// executeAction(new SetPowerControl("250"));
-		// executeAction(new EnableContinueMode());
+	public final void defaultConfiguration() {
+		Settings settings = cr.getReader().queryDefaultSettings();
+
+		// this will eventually cause buffer events
+		settings.getReport().setMode(ReportMode.Individual);
+		settings.setReaderMode(ReaderMode.AutoSetDenseReader);
+		settings.getAntennas().enableAll();
+
+		// Apply the new settings
+		try {
+			cr.applySettings(settings);
+		} catch (OctaneSdkException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
 	public TagAntenna getTag() {
 		return CaptureTagsRepresentation.getTag();
 	}
-	
 
 	public String getIpReader() {
 		// TODO Auto-generated method stub
