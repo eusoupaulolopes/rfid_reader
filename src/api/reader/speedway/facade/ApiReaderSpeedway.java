@@ -7,16 +7,12 @@ import java.util.List;
 import com.impinj.octane.OctaneSdkException;
 import com.impinj.octane.ReaderMode;
 import com.impinj.octane.ReportMode;
-import com.impinj.octane.SearchMode;
 import com.impinj.octane.Settings;
 
 import api.reader.facade.ApiReaderFacade;
 import api.reader.interfaces.Command;
-import api.reader.interfaces.ConnectReader;
 import api.reader.nesslab.exceptions.SessionFullException;
 import api.reader.nesslab.utils.CaptureTagsRepresentation;
-import api.reader.nesslab.utils.NesslabConnectReader;
-import api.reader.nesslab.utils.OperationUtil;
 import api.reader.nesslab.utils.TagAntenna;
 import api.reader.nesslab.utils.TranslateResponse;
 import api.reader.speedway.utils.SpeedwayConnectReader;
@@ -67,10 +63,7 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 
 	@Override
 	public String getResponse() throws UnknownHostException, IOException {
-
-		String response = "";
-		response = cr.getResponse();
-		return response;
+		return cr.getResponse();
 	}
 
 	@Override
@@ -156,11 +149,10 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 		Settings settings = cr.getReader().queryDefaultSettings();
 
 		// this will eventually cause buffer events
-		settings.getReport().setMode(ReportMode.Individual);
+		settings.getReport().setMode(ReportMode.Individual );
 		settings.setReaderMode(ReaderMode.AutoSetDenseReader);
 		settings.getAntennas().enableAll();
 
-		// Apply the new settings
 		try {
 			cr.applySettings(settings);
 		} catch (OctaneSdkException e) {

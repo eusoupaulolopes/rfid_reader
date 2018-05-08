@@ -4,17 +4,9 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import com.example.sdksamples.AntennaChangeListenerImplementation;
-import com.example.sdksamples.BufferOverflowListenerImplementation;
-import com.example.sdksamples.BufferWarningListenerImplementation;
-import com.example.sdksamples.ConnectionAttemptListenerImplementation;
-import com.example.sdksamples.ConnectionLostListenerImplementation;
-import com.example.sdksamples.GpiChangeListenerImplementation;
-import com.example.sdksamples.KeepAliveListenerImplementation;
-import com.example.sdksamples.ReaderStartListenerImplementation;
-import com.example.sdksamples.ReaderStopListenerImplementation;
+import org.apache.mina.core.session.DummySession;
+
 import com.example.sdksamples.TagReportListenerImplementation;
-import com.impinj.octane.AntennaChangeListener;
 import com.impinj.octane.ImpinjReader;
 import com.impinj.octane.OctaneSdkException;
 import com.impinj.octane.Settings;
@@ -26,7 +18,6 @@ public class SpeedwayConnectReader implements ConnectReader {
 	protected static SpeedwayConnectReader connectorReader;
 	protected static ImpinjReader reader;
 	protected Scanner s = new Scanner(System.in);
-	
 
 	public static SpeedwayConnectReader getInstance(String ip, Integer port)
 			throws UnknownHostException, IOException, OctaneSdkException {
@@ -61,7 +52,11 @@ public class SpeedwayConnectReader implements ConnectReader {
 	@Override
 	public void closeConnection() throws IOException {
 		System.out.println("Disconnecting from " + reader.getAddress());
-		if (reader.isConnected()) reader.disconnect();
+		if (reader.isConnected())
+			reader.disconnect();
+		System.out.println("Ending execution " + reader.getAddress());
+		System.exit(-1);
+		
 	}
 
 	/**
@@ -70,7 +65,6 @@ public class SpeedwayConnectReader implements ConnectReader {
 	 */
 	public void send(String action) {
 		// TODO
-
 	}
 
 	@Override
@@ -106,7 +100,8 @@ public class SpeedwayConnectReader implements ConnectReader {
 	public void forceStopReader() {
 		System.out.println("Stopping  " + reader.getAddress());
 		try {
-			if (reader.isConnected()) reader.stop();
+			if (reader.isConnected())
+				reader.stop();
 		} catch (OctaneSdkException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -124,8 +119,7 @@ public class SpeedwayConnectReader implements ConnectReader {
 	public void readerTags() {
 		try {
 			reader.start();
-			System.out.println("Press Enter to stop.");		
-	
+			System.out.println("Press Enter to stop.");
 
 		} catch (OctaneSdkException e) {
 			// TODO Auto-generated catch block
@@ -187,14 +181,14 @@ public class SpeedwayConnectReader implements ConnectReader {
 	}
 
 	public void applySettings(Settings settings) throws OctaneSdkException {
-		System.out.println("Applying Settings");
+		System.out.println("Applying Default Settings");
 		reader.setTagReportListener(new TagReportListenerImplementation());
-        reader.applySettings(settings);
+		reader.applySettings(settings);
 
 	};
-	
+
 	public boolean hasResponse() throws IOException {
-		return s.nextLine().isEmpty() ? false: true;
-		
+		return s.nextLine().isEmpty() ? false : true;
+
 	}
 }
