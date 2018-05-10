@@ -7,6 +7,8 @@ import java.util.Scanner;
 import org.apache.mina.core.session.DummySession;
 
 import com.example.sdksamples.TagReportListenerImplementation;
+import com.impinj.octane.AutoStartMode;
+import com.impinj.octane.AutoStopMode;
 import com.impinj.octane.ImpinjReader;
 import com.impinj.octane.OctaneSdkException;
 import com.impinj.octane.Settings;
@@ -54,7 +56,7 @@ public class SpeedwayConnectReader implements ConnectReader {
 		System.out.println("Disconnecting from " + reader.getAddress());
 		if (reader.isConnected())
 			reader.disconnect();
-		System.out.println("Ending execution " + reader.getAddress());
+		System.out.println("Ending execution, Have a good day! ");
 		System.exit(-1);
 		
 	}
@@ -116,7 +118,7 @@ public class SpeedwayConnectReader implements ConnectReader {
 	}
 
 	@Override
-	public void readerTags() {
+	public void readTags() {
 		try {
 			reader.start();
 			System.out.println("Press Enter to stop.");
@@ -177,18 +179,20 @@ public class SpeedwayConnectReader implements ConnectReader {
 	}
 
 	public String getResponse() {
-		return s.nextLine();
+		return SpeedwayCaptureTagRepresentation.getJsonTagUnique();
+	}
+	public boolean hasResponse() throws IOException {
+		return SpeedwayCaptureTagRepresentation.haveNewTag();
+
 	}
 
 	public void applySettings(Settings settings) throws OctaneSdkException {
 		System.out.println("Applying Default Settings");
-		reader.setTagReportListener(new TagReportListenerImplementation());
-		reader.applySettings(settings);
+		reader.setTagReportListener(new TagReportListenerImp2());
+         reader.applySettings(settings);
+
 
 	};
 
-	public boolean hasResponse() throws IOException {
-		return s.nextLine().isEmpty() ? false : true;
-
-	}
+	
 }

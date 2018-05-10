@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import com.impinj.octane.AutoStartMode;
+import com.impinj.octane.AutoStopMode;
 import com.impinj.octane.OctaneSdkException;
 import com.impinj.octane.ReaderMode;
+import com.impinj.octane.ReportConfig;
 import com.impinj.octane.ReportMode;
 import com.impinj.octane.Settings;
 
@@ -15,6 +18,7 @@ import api.reader.nesslab.exceptions.SessionFullException;
 import api.reader.nesslab.utils.CaptureTagsRepresentation;
 import api.reader.nesslab.utils.TagAntenna;
 import api.reader.nesslab.utils.TranslateResponse;
+import api.reader.speedway.utils.SpeedwayCaptureTagRepresentation;
 import api.reader.speedway.utils.SpeedwayConnectReader;
 
 /**
@@ -70,6 +74,12 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 	public boolean hasResponse() throws UnknownHostException, IOException {
 		return cr.hasResponse();
 	}
+	
+	@Override
+	public boolean hasNewTag() {
+		return SpeedwayCaptureTagRepresentation.haveNewTag();
+	}
+
 
 	/**
 	 * To return all tags captured by methods getTagStringRepresentation() and
@@ -91,7 +101,7 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 		String response = getResponse();
 		// TODO Representacao JSON das tags
 		// api.reader.nesslab.utils.CaptureTagsRepresentation.getObjectRepresentation(response);
-		System.out.println(response);
+		//SpeedwayCaptureTagRepresentation.getObjectRepresentation(response);
 	}
 
 	/**
@@ -115,17 +125,7 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 	 */
 	@Override
 	public String getJsonRepresentation() {
-		return api.reader.nesslab.utils.CaptureTagsRepresentation.getJsonRepresentation();
-	}
-
-	/**
-	 * To return a json representation of one reading.
-	 * 
-	 * @return Set of tags read.
-	 */
-	@Override
-	public boolean hasNewTag() {
-		return CaptureTagsRepresentation.haveNewTag();
+		return SpeedwayCaptureTagRepresentation.getJsonRepresentation();
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 	 */
 	@Override
 	public String getTagUniqueJsonRepresentation() {
-		return CaptureTagsRepresentation.getJsonTagUnique();
+		return SpeedwayCaptureTagRepresentation.getJsonTagUnique();
 	}
 
 	@Override
@@ -149,8 +149,17 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 		Settings settings = cr.getReader().queryDefaultSettings();
 
 		// this will eventually cause buffer events
+		settings.getReport().setIncludeAntennaPortNumber(true);
+		settings.getReport().setIncludeChannel(true);
 		settings.getReport().setMode(ReportMode.Individual );
-		settings.setReaderMode(ReaderMode.AutoSetDenseReader);
+		//settings.setReaderMode(ReaderMode.AutoSetDenseReader);
+		
+		settings.getReport().setIncludeAntennaPortNumber(true);		
+		settings.getAutoStart().setMode(AutoStartMode.Periodic);
+        settings.getAutoStart().setPeriodInMs(5000);
+        settings.getAutoStop().setMode(AutoStopMode.None);
+        settings.getAutoStop().setDurationInMs(10000000);
+
 		settings.getAntennas().enableAll();
 
 		try {

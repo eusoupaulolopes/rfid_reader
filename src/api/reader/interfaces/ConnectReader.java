@@ -20,7 +20,7 @@ public interface ConnectReader {
 	
 	void oneTagReader();
 	
-	void readerTags();
+	void readTags();
 	
 	void readerTagsReset();
 	

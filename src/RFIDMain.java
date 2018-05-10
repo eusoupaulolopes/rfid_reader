@@ -1,15 +1,16 @@
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Scanner;
+
+import com.example.sdksamples.DisconnectedOperation;
 
 import api.reader.commands.CloseConnection;
-import api.reader.commands.DisableBuzzer;
-import api.reader.commands.EnableBuzzer;
-import api.reader.commands.ReaderTags;
+import api.reader.commands.ForceStopReader;
+import api.reader.commands.ReadTags;
 import api.reader.commands.ReaderTagsReset;
 import api.reader.facade.ApiReaderFacade;
 import api.reader.nesslab.exceptions.SessionFullException;
-import api.reader.nesslab.facade.ApiReaderNesslab;
 import api.reader.nesslab.utils.OperationUtil;
 import api.reader.speedway.facade.ApiReaderSpeedway;
 
@@ -23,23 +24,16 @@ public class RFIDMain {
 			 * with the Nesslab is opened.
 			 */
 			ApiReaderFacade api = new ApiReaderSpeedway("192.168.1.2");
-			//ApiReaderFacade api = new ApiReaderNesslab("10.7.125.7");
-			api.defaultConfiguration();
-			api.clearTemporaryMemory(200);// Clean memory of 2 in 2 minutes.
+			// ApiReaderFacade api = new ApiReaderNesslab("10.7.125.7");
 
-			api.executeAction(new DisableBuzzer());
-			api.executeAction(new ReaderTags());
-			while (api.hasResponse()) {
-				try {
-					api.captureTagsObject();
-					if (api.hasNewTag()) {
-						System.out.println(api.getTagUniqueJsonRepresentation());
-					}
-				} catch (SessionFullException e) {
-					api.executeAction(new ReaderTagsReset());
-				}
-			}
+			api.defaultConfiguration();
+			api.executeAction(new ReadTags());
+			
+			Scanner s = new Scanner(System.in);
+			s.nextLine();
+			
 			api.executeAction(new CloseConnection());
+
 		} catch (UnknownHostException e) {
 			System.err.println("Host not found: " + OperationUtil.getIpReader());
 			System.exit(1);

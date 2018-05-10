@@ -88,7 +88,7 @@ public class NesslabConnectReader implements ConnectReader {
 		this.send(OperationUtil.ONE_TAG_READ);
 	}
 
-	public void readerTags() {
+	public void readTags() {
 		this.send(OperationUtil.READ_TAGS_INVENTORY);
 	}
 
