@@ -1,81 +1,76 @@
 package api.reader.speedway.utils;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.impinj.octane.ImpinjReader;
-import com.impinj.octane.QtGetConfigResultStatus;
-import com.impinj.octane.ReadResultStatus;
 import com.impinj.octane.Tag;
-import com.impinj.octane.TagBlockPermalockOpResult;
-import com.impinj.octane.TagKillOpResult;
-import com.impinj.octane.TagLockOpResult;
-import com.impinj.octane.TagOpResult;
-import com.impinj.octane.TagQtGetOpResult;
-import com.impinj.octane.TagQtSetOpResult;
-import com.impinj.octane.TagReadOpResult;
 import com.impinj.octane.TagReport;
 import com.impinj.octane.TagReportListener;
-import com.impinj.octane.TagWriteOpResult;
 
 public class TagReportListenerImp implements TagReportListener {
-	private String reportLine = "";
+	private StringBuilder reportBuilder = new StringBuilder();
 	
     @Override
     public void onTagReported(ImpinjReader reader, TagReport report) {
         List<Tag> tags = report.getTags();
-        
+         // Cleanning StringBuilder
         for (Tag t : tags) {
-            System.out.print(" EPC: " + t.getEpc().toString());
+        	reportBuilder.setLength(0); 
+            reportBuilder.append(" EPC: " + t.getEpc().toHexString().toString().replaceAll("\\s+"," "));
 
             if (!reader.getName().isEmpty()) {
-                System.out.print(" Reader_name: " + reader.getName());
+            	reportBuilder.append(" Reader_name: " + reader.getName());
             } else {
-                System.out.print(" Reader_ip: " + reader.getAddress());
+            	reportBuilder.append(" Reader_ip: " + reader.getAddress());
             }
 
             if (t.isAntennaPortNumberPresent()) {
-                System.out.print(" antenna: " + t.getAntennaPortNumber());
+            	reportBuilder.append(" antenna: " + t.getAntennaPortNumber());
             }
 
             if (t.isFirstSeenTimePresent()) {
-                System.out.print(" first: " + t.getFirstSeenTime().ToString());
+            	reportBuilder.append(" first: " + t.getFirstSeenTime().ToString());
             }
 
             if (t.isLastSeenTimePresent()) {
-                System.out.print(" last: " + t.getLastSeenTime().ToString());
+            	reportBuilder.append(" last: " + t.getLastSeenTime().ToString());
             }
 
             if (t.isSeenCountPresent()) {
-                System.out.print(" count: " + t.getTagSeenCount());
+            	reportBuilder.append(" count: " + t.getTagSeenCount());
             }
 
             if (t.isRfDopplerFrequencyPresent()) {
-                System.out.print(" doppler: " + t.getRfDopplerFrequency());
+            	reportBuilder.append(" doppler: " + t.getRfDopplerFrequency());
             }
 
             if (t.isPeakRssiInDbmPresent()) {
-                System.out.print(" peak_rssi: " + t.getPeakRssiInDbm());
+            	reportBuilder.append(" peak_rssi: " + t.getPeakRssiInDbm());
             }
 
             if (t.isChannelInMhzPresent()) {
-                System.out.print(" chan_MHz: " + t.getChannelInMhz());
+            	reportBuilder.append(" chan_MHz: " + t.getChannelInMhz());
             }
 
             if (t.isFastIdPresent()) {
-                System.out.print("\n     fast_id: " + t.getTid().toHexString());
+            	reportBuilder.append("\n     fast_id: " + t.getTid().toHexString());
 
-                System.out.print(" model: " +
+            	reportBuilder.append(" model: " +
                         t.getModelDetails().getModelName());
 
-                System.out.print(" epcsize: " +
+            	reportBuilder.append(" epcsize: " +
                         t.getModelDetails().getEpcSizeBits());
 
-                System.out.print(" usermemsize: " +
+            	reportBuilder.append(" usermemsize: " +
                         t.getModelDetails().getUserMemorySizeBits());
             }
 
-            System.out.println("");
+            SpeedwayCaptureTagRepresentation.setJsonTagUnique(reportBuilder.toString());
+            SpeedwayCaptureTagRepresentation.showTagUnique();
         }
+        //
     }
 
 }

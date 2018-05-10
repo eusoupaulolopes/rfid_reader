@@ -188,7 +188,7 @@ public class SpeedwayConnectReader implements ConnectReader {
 
 	public void applySettings(Settings settings) throws OctaneSdkException {
 		System.out.println("Applying Default Settings");
-		reader.setTagReportListener(new TagReportListenerImp2());
+		reader.setTagReportListener(new TagReportListenerImp());
          reader.applySettings(settings);
 
 
