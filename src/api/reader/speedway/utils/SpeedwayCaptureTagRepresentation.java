@@ -3,15 +3,18 @@ package api.reader.speedway.utils;
 import com.google.gson.Gson;
 
 public class SpeedwayCaptureTagRepresentation {
-	private static String jsonRepresentation = "";
+
 	private static String jsonTagUnique = "";
 	private static String oldJsonTagUnique = "";
-
+	
+	
+	/**
+	 * Follow specification of Nesslab reader.
+	 * @param response
+	 */
 	public static void getObjectRepresentation(String response) {
 		if (!response.isEmpty()) {
-			oldJsonTagUnique = jsonTagUnique;
 			jsonTagUnique = response;
-			jsonRepresentation += jsonTagUnique;
 
 		}
 	}
@@ -29,13 +32,14 @@ public class SpeedwayCaptureTagRepresentation {
 		jsonTagUnique = jsonTag;
 	}
 
-	public static void setJsonRepresentation(String jsonRepresentation) {
-		SpeedwayCaptureTagRepresentation.jsonRepresentation = jsonRepresentation;
-	}
 
-	public static String getJsonRepresentation() {
+	/**
+	 * Modify this method to alter printer mode 
+	 * @param string
+	 */
+	public static void showTagUnique() {
+		System.out.println(jsonTagUnique);
 		
-		return jsonTagUnique;
 	}
 
 }

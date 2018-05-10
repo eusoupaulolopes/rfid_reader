@@ -125,7 +125,7 @@ public class ApiReaderSpeedway implements ApiReaderFacade {
 	 */
 	@Override
 	public String getJsonRepresentation() {
-		return SpeedwayCaptureTagRepresentation.getJsonRepresentation();
+		return SpeedwayCaptureTagRepresentation.getJsonTagUnique();
 	}
 
 	/**

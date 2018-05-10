@@ -67,8 +67,8 @@ public class TagReportListenerImp2 implements TagReportListener {
                         t.getModelDetails().getUserMemorySizeBits());
             }
 
-            System.out.println(reportBuilder.toString());
-            //SpeedwayCaptureTagRepresentation.setJsonTagUnique(reportBuilder.toString());
+            SpeedwayCaptureTagRepresentation.setJsonTagUnique(reportBuilder.toString());
+            SpeedwayCaptureTagRepresentation.showTagUnique();
         }
         //
     }
